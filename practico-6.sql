@@ -109,17 +109,21 @@ create table productrefillment (
 drop trigger restock_product;
 delimiter //
 create trigger restock_product
-after insert on orders
+after insert on orderdetails
 for each row
 BEGIN
 	insert into productrefillment (productCode, orderDate, quantity)
-    select orderdetails.productCode, new.orderDate, 10 as quantity
-    from orderdetails join products on products.productCode = orderdetails.productCode
-    where new.orderNumber = orderdetails.orderNumber
-    and products.quantityInStock - orderdetails.quantityOrdered < 10;
+    select new.productCode, CURRENT_TIMESTAMP(), 10 as quantity
+    from products 
+    where new.productCode = products.productCode
+		  and products.quantityInStock - new.quantityOrdered < 10;
 END //
 
 delimiter ;
+
+select * from productrefillment;
+insert into orderdetails values (10205, 'S12_1099', 60, 12, 3); # test trigger (should add refillment)
+insert into orderdetails values (10204, 'S12_1099', 12, 12, 3); # test trigger (should not add refillment)
 
 # 9 Crear un rol "Empleado" en la BD que establezca accesos de lectura a todas las
 # tablas y accesos de creación de vistas.
