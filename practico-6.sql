@@ -47,15 +47,19 @@ end //
 delimiter ;
 
 # 5
-create view PremiumCustomers as (
+drop view PremiumCustomers;
+create view PremiumCustomers 
+(custName, city, totalSpent)
+as (
 	select customers.customerName, 
 		   customers.city,
            sum(payments.amount) as totalSpent
 	from customers left join payments
     on payments.customerNumber = customers.customerNumber
-    group by (payments.customerNumber)
+    group by customers.customerNumber
     order by totalSpent desc limit 10
 );
+select * from PremiumCustomers;
 
 # 6
 drop function employee_of_the_month;

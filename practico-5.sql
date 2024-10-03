@@ -49,7 +49,7 @@ ORDER BY -film_amount;
 
 # 6
 (SELECT payment_date
-FROM payment ORDER BY -payment_date DESC LIMIT 1)
+FROM payment ORDER BY payment_date DESC LIMIT 1)
 UNION
 (SELECT payment_date
 FROM payment ORDER BY payment_date ASC LIMIT 1);
