@@ -1,4 +1,4 @@
-# 1
+# 1 Devuelva la oficina con mayor número de empleados.
 select * from offices
 where officeCode = (
 	select officeCode
@@ -25,7 +25,7 @@ from (select count(*) as count
      group by offices.officeCode
 ) as salesPerOffice;
 
-# 3
+# 3 Devolver el valor promedio, máximo y mínimo de pagos que se hacen por mes.
 select year(paymentDate), month(paymentDate),
 		avg(amount) as avgMonthlyPayments,
 		max(amount) as maxMonthlyPayments,
@@ -34,7 +34,7 @@ from payments
 group by year(paymentDate), month(paymentDate)
 order by year(paymentDate), month(paymentDate);
 
-# 4
+# 4 Crear un procedimiento Update Credit en donde se modifique el límite de crédito de un cliente con un valor pasado por parámetro.
 delimiter //
 create procedure update_credit(
 	in customerNum int,
@@ -46,7 +46,9 @@ create procedure update_credit(
 end //
 delimiter ;
 
-# 5
+# 5 Cree una vista "Premium Customers" que devuelva el top 10 de clientes que más
+# dinero han gastado en la plataforma. La vista deberá devolver el nombre del cliente,
+# la ciudad y el total gastado por ese cliente en la plataforma.
 drop view PremiumCustomers;
 create view PremiumCustomers 
 (custName, city, totalSpent)
@@ -61,7 +63,9 @@ as (
 );
 select * from PremiumCustomers;
 
-# 6
+# 6 Cree una función "employee of the month" que tome un mes y un año y devuelve el
+# empleado (nombre y apellido) cuyos clientes hayan efectuado la mayor cantidad de
+# órdenes en ese mes.
 drop function employee_of_the_month;
 delimiter //
 create function employee_of_the_month(
@@ -86,7 +90,8 @@ set @test = employee_of_the_month(2003, 3);
 
 select @test;
 
-# 7
+# 7 Crear una nueva tabla "Product Refillment". Deberá tener una relación varios a uno
+# con "products"y los campos: `refillmentID`, `productCode`, `orderDate`, `quantity`.
 create table productrefillment (
 	refillmentID int not null AUTO_INCREMENT,
     productCode varchar(15),
@@ -96,7 +101,11 @@ create table productrefillment (
     quantity int
 );
 
-# 8
+# 8 Definir un trigger "Restock Product" que esté pendiente de los cambios efectuados
+# en `orderdetails` y cada vez que se agregue una nueva orden revise la cantidad de
+# productos pedidos (`quantityOrdered`) y compare con la cantidad en stock
+# (`quantityInStock`) y si es menor a 10 genere un pedido en la tabla "Product
+# Refillment" por 10 nuevos productos.
 drop trigger restock_product;
 delimiter //
 create trigger restock_product
@@ -112,12 +121,15 @@ END //
 
 delimiter ;
 
-# 9
+# 9 Crear un rol "Empleado" en la BD que establezca accesos de lectura a todas las
+# tablas y accesos de creación de vistas.
 create role employee;
 grant select, create view on classicmodels.* to employee;
 show grants for employee;
 
-# 10
+# 10 Encontrar, para cada cliente de aquellas ciudades que comienzan por "N", la menor y
+# la mayor diferencia en días entre las fechas de sus pagos. No mostrar el id del
+# cliente, sino su nombre y el de su contacto. (in progress)
 SELECT customers.customerName, 
 	customers.contactFirstName,
 	datediff(
