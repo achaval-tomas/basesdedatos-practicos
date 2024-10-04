@@ -101,6 +101,21 @@ GRANT UPDATE (colN), DELETE ON tabla TO rol;
 GRANT rol2 TO rol;
 SHOW GRANTS FOR rol;
 
+-- ON DUPLICATE KEY UPDATE
+INSERT INTO tabla (SELECT * FROM tabla AS t)
+ON DUPLICATE KEY UPDATE colN = (
+	SELECT COUNT(*)
+    FROM t2
+    WHERE t2.tablaId = tabla.id
+);
+-- ES EQUIVALENTE A
+UPDATE tabla
+SET colN = (
+	SELECT COUNT(*) 
+    FROM t2
+    WHERE t2.tablaId = tabla.id
+);
+
 -- Extras
 /*
 LEFT JOIN -> PUEDE DEJAR NULOS DEL LADO DERECHO (a, b, c, NULL, NULL, NULL) si no encuentra match.
