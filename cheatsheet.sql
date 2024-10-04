@@ -121,6 +121,8 @@ SET colN = (
 LEFT JOIN -> PUEDE DEJAR NULOS DEL LADO DERECHO (a, b, c, NULL, NULL, NULL) si no encuentra match.
 INNER JOIN -> NO DEJA NULOS
 SELECT id, data INTO @x, @y FROM tabla LIMIT 1; -> User-defined variables
+
+DECIMAL(M,D) indica M digitos en total de los cuales habrá hasta D después de la coma y hasta M-D en la parte entera.
 */
 
 
