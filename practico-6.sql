@@ -92,6 +92,7 @@ select @test;
 
 # 7 Crear una nueva tabla "Product Refillment". Deberá tener una relación varios a uno
 # con "products"y los campos: `refillmentID`, `productCode`, `orderDate`, `quantity`.
+drop table if exists productrefillment;
 create table productrefillment (
 	refillmentID int not null AUTO_INCREMENT,
     productCode varchar(15),
@@ -112,18 +113,20 @@ create trigger restock_product
 after insert on orderdetails
 for each row
 BEGIN
-	insert into productrefillment (productCode, orderDate, quantity)
-    select new.productCode, CURRENT_TIMESTAMP(), 10 as quantity
-    from products 
-    where new.productCode = products.productCode
-		  and products.quantityInStock - new.quantityOrdered < 10;
+	if (exists (select 1 from products 
+				where new.productCode = products.productCode
+				and products.quantityInStock - new.quantityOrdered < 10)
+	) then
+		insert into productrefillment (productCode, orderDate, quantity)
+		values (new.productCode, CURRENT_TIMESTAMP(), 10);
+    end if;
 END //
 
 delimiter ;
 
 select * from productrefillment;
-insert into orderdetails values (10205, 'S12_1099', 60, 12, 3); # test trigger (should add refillment)
-insert into orderdetails values (10204, 'S12_1099', 12, 12, 3); # test trigger (should not add refillment)
+insert into orderdetails values (10206, 'S12_1099', 60, 12, 3); # test trigger (should add refillment)
+insert into orderdetails values (10207, 'S12_1099', 12, 12, 3); # test trigger (should not add refillment)
 
 # 9 Crear un rol "Empleado" en la BD que establezca accesos de lectura a todas las
 # tablas y accesos de creación de vistas.
@@ -133,7 +136,7 @@ show grants for employee;
 
 # 10 Encontrar, para cada cliente de aquellas ciudades que comienzan por "N", la menor y
 # la mayor diferencia en días entre las fechas de sus pagos. No mostrar el id del
-# cliente, sino su nombre y el de su contacto. (in progress)
+# cliente, sino su nombre y el de su contacto. (incompleto)
 SELECT customers.customerName, 
 	customers.contactFirstName,
 	datediff(
