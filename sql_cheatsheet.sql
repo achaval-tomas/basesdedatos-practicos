@@ -88,7 +88,6 @@ BEGIN
     IF (condicion) THEN
 		INSERT INTO tabla VALUES (a, b, c);
 	END IF;
-	return varname;
 END //
 
 DELIMITER ;
